@@ -1,0 +1,20 @@
+{
+  "name": "Supply-Chain-Management",
+  "version": "1.0.0",
+  "description": "This is a college 7th sem project.All the necessary points will be discussed soon in this README.md file .",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kislaykk/Supply-Chain-Management.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kislaykk/Supply-Chain-Management/issues"
+  },
+  "homepage": "https://github.com/kislaykk/Supply-Chain-Management#readme"
+}
