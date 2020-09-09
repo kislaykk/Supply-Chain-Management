@@ -12,7 +12,8 @@ contract Tracking
         uint quantity;
         uint[] locationData;
         uint timeStamp;
-        address sender;
+        address payable sender;
+        bool paid;
     }
     mapping(string=>Shipment)shipments;
     mapping(address=>uint) balences;
@@ -36,6 +37,20 @@ contract Tracking
         _;
     }
     
+    //payment
+    function sendPayment(address payable receiver,uint amount) onlyAdmin internal returns(bool)
+    {
+        if(address(this).balance<=amount)
+        {
+            receiver.transfer(amount);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     function setContractParameters(uint[] memory _location,uint _leadTime,uint _payment)onlyAdmin public returns (bool)
     {
         contractLocation=_location;
@@ -60,13 +75,17 @@ contract Tracking
         // improve the logic
         //more if and else for different cases......
 
-        if( keccak256(bytes( shipments[trackingNo].item))==keccak256(bytes(_item)) && shipments[trackingNo].quantity==_quantity)
+        if( keccak256(bytes( shipments[trackingNo].item))==keccak256(bytes(_item)) && shipments[trackingNo].quantity==_quantity && !(shipments[trackingNo].paid))
         {
             successShipped[shipments[trackingNo].sender]+=1;
             emit Success('Item received',trackingNo,_locationData,block.timestamp,msg.sender);
             if (block.timestamp<=shipments[trackingNo].timeStamp+contractLeadTime && _locationData[0]==contractLocation[0] && _locationData[1]==contractLocation[1])
             {
-                //payment???????
+                if(sendPayment(shipments[trackingNo].sender,contractPayment))
+                {
+                    emit Payment("Payment successful",admin,shipments[trackingNo].sender,contractPayment);
+                    shipments[trackingNo].paid=true;
+                }
             }
             else
             {
@@ -75,7 +94,7 @@ contract Tracking
         }
         else
         {
-            Failure('Error in item /Quantity');
+            emit Failure('Error in item/quantity');
         }
     }
 
@@ -83,5 +102,34 @@ contract Tracking
     {
         delete shipments[trackingNo];
         return true;
+    }
+
+    function checkShipment(string memory trackingNo) public view returns(string memory,uint,uint[] memory,uint,address)
+    {
+        return(shipments[trackingNo].item,shipments[trackingNo].quantity,shipments[trackingNo].locationData,shipments[trackingNo].timeStamp,shipments[trackingNo].sender);
+    }
+
+    function checkSuccess(address _sender) public view returns(uint,uint)
+    {
+        return (successShipped[_sender],totalShipped[_sender]);
+    }
+
+    function calculateReputation(address _sender) public view returns(uint)
+    {
+        if(totalShipped[_sender]!=0)
+        {
+            return(100*successShipped[_sender]/totalShipped[_sender]);
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    fallback() onlyAdmin external {}
+
+    function balanceOfContract()onlyAdmin external view returns (uint)
+    {
+        return (address(this).balance);
     }
 }
