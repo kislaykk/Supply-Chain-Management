@@ -20,6 +20,17 @@ contract Tracking
     mapping(address=>uint) totalShipped;
     mapping(address=>uint) successShipped;
 
+    //Supplier  
+    struct Supplier
+    {
+        string name;
+        uint phoneNo;
+        string cityState;
+        string country;
+        uint reputation;
+    }
+    mapping(address=>Supplier) suppliers;
+    address[] suppliersByAddress;
     //events to display messages
     event Success(string _message,string trackingNo,uint[] _locationData,uint _timeStamp,address _sender);
     event Payment(string _message,address _from,address _to,uint _amount);
@@ -36,7 +47,54 @@ contract Tracking
         require(msg.sender!=admin, "You are not authorized for this action");
         _;
     }
-    
+
+
+    function addSupplier(string memory _name,uint _phoneNo,string memory _cityState,string memory _country) public returns(bool)
+    {
+        if(bytes(suppliers[msg.sender].name).length==0 && bytes(_name).length!=0)
+        {
+            suppliers[msg.sender].name=_name;
+            suppliers[msg.sender].phoneNo=_phoneNo;
+            suppliers[msg.sender].cityState=_cityState;
+            suppliers[msg.sender].country=_country;
+            suppliers[msg.sender].reputation=calculateReputation(msg.sender);
+            suppliersByAddress.push(msg.sender);
+            return true;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    function deleteSupplier(address _supplier) onlyAdmin public returns(bool)
+    {
+        delete suppliers[_supplier];
+        for (uint i = 0; i < suppliersByAddress.length; i++) 
+        {
+            if (suppliersByAddress[i] == _supplier) 
+            {
+            for (uint index = i; index < suppliersByAddress.length- 1; index++) 
+            {
+            suppliersByAddress[index] =
+            suppliersByAddress[index + 1];
+            }
+            delete suppliersByAddress[suppliersByAddress.length-1];
+            
+        }
+}
+        return true;
+    }
+
+    function findSupplier(address _supplier)public  view returns (string memory,uint,string memory,string memory,uint)
+    {
+        return(suppliers[_supplier].name,suppliers[_supplier].phoneNo,suppliers[_supplier].cityState,suppliers[_supplier].country,suppliers[_supplier].reputation);
+    }
+
+    function allSuppliers() public view returns (address[] memory) 
+    {
+        return suppliersByAddress;
+    }
     //payment
     function sendPayment(address payable receiver,uint amount) onlyAdmin internal returns(bool)
     {
