@@ -44,7 +44,7 @@ contract Tracking
 
     modifier onlyAdmin()
     {
-        require(msg.sender!=admin, "You are not authorized for this action");
+        require(msg.sender==admin, "You are not authorized for this action");
         _;
     }
 
@@ -82,7 +82,7 @@ contract Tracking
             delete suppliersByAddress[suppliersByAddress.length-1];
             
         }
-}
+        }
         return true;
     }
 
@@ -98,7 +98,7 @@ contract Tracking
     //payment
     function sendPayment(address payable receiver,uint amount) onlyAdmin internal returns(bool)
     {
-        if(address(this).balance<=amount)
+        if(address(this).balance>=amount)
         {
             receiver.transfer(amount);
             return true;
@@ -126,6 +126,7 @@ contract Tracking
         shipments[trackingNo].sender=msg.sender;
         totalShipped[msg.sender]+=1;
         emit Success('Item Shipped',trackingNo,_locationData,shipments[trackingNo].timeStamp,msg.sender);
+        return true;
     }
 
     function receiveShipment(string memory trackingNo,string memory _item,uint _quantity,uint[] memory _locationData)public  returns (bool)
@@ -136,23 +137,33 @@ contract Tracking
         if( keccak256(bytes( shipments[trackingNo].item))==keccak256(bytes(_item)) && shipments[trackingNo].quantity==_quantity && !(shipments[trackingNo].paid))
         {
             successShipped[shipments[trackingNo].sender]+=1;
-            emit Success('Item received',trackingNo,_locationData,block.timestamp,msg.sender);
+            
             if (block.timestamp<=shipments[trackingNo].timeStamp+contractLeadTime && _locationData[0]==contractLocation[0] && _locationData[1]==contractLocation[1])
             {
                 if(sendPayment(shipments[trackingNo].sender,contractPayment))
                 {
-                    emit Payment("Payment successful",admin,shipments[trackingNo].sender,contractPayment);
                     shipments[trackingNo].paid=true;
+                    emit Payment("Payment successful",admin,shipments[trackingNo].sender,contractPayment);
+                    return true;
+                    
+                }
+                else
+                {
+                    emit Payment("Payment failed",admin,shipments[trackingNo].sender,contractPayment);
+                    return false;
                 }
             }
+            
             else
             {
                 emit Failure("Criteria not met hence transaction failed");
+                return false;
             }
         }
         else
         {
             emit Failure('Error in item/quantity');
+            return false;
         }
     }
 
@@ -183,10 +194,14 @@ contract Tracking
             return 0;
         }
     }
+    function showAdmin() public view returns (address)
+    {
+        return admin;
+    }
 
-    fallback() onlyAdmin external {}
+    receive() onlyAdmin external payable{}
 
-    function balanceOfContract()onlyAdmin external view returns (uint)
+    function balanceOfContract()onlyAdmin public view returns (uint)
     {
         return (address(this).balance);
     }
