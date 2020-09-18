@@ -137,7 +137,7 @@ contract Tracking
         if( keccak256(bytes( shipments[trackingNo].item))==keccak256(bytes(_item)) && shipments[trackingNo].quantity==_quantity && !(shipments[trackingNo].paid))
         {
             successShipped[shipments[trackingNo].sender]+=1;
-            
+            emit Success('Item received',trackingNo,_locationData,block.timestamp,msg.sender);
             if (block.timestamp<=shipments[trackingNo].timeStamp+contractLeadTime && _locationData[0]==contractLocation[0] && _locationData[1]==contractLocation[1])
             {
                 if(sendPayment(shipments[trackingNo].sender,contractPayment))
