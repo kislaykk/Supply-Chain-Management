@@ -1,5 +1,9 @@
 //SPDX-License-Identifier:UNLICENSED
-pragma solidity ^0.7.0;
+
+pragma solidity ^0.7.1;
+
+pragma solidity ^0.7.1;
+
 
 
 contract Provenance
@@ -30,7 +34,7 @@ contract Provenance
 
     modifier onlyAdmin()
     {
-        require(msg.sender!=admin, "You are not authorized to perform this action");
+        require(msg.sender==admin, "You are not authorized to perform this action");
         _;
     }
 
@@ -65,7 +69,7 @@ contract Provenance
     function certifyProducer(address _producer) onlyAdmin public returns (bool)
     {
         producers[_producer].certified=true;
-        return false;
+        return true;
     }
 
     function addProduct(string memory _serialNo,string memory _name,uint[] memory _locationData)public  returns (bool)
@@ -76,12 +80,16 @@ contract Provenance
             products[_serialNo].name=_name;
             products[_serialNo].locationData=_locationData;
             products[_serialNo].timeStamp=block.timestamp;
-            return true;
+            return (true);
         }
         else
         {
-            return false;
+            return (false);
         }
+    }
+    function showOwner() public view returns(address)
+    {
+        return admin;
     }
     function removeProduct(string memory _serialNo) onlyAdmin public returns(bool)
     {
