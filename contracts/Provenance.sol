@@ -4,8 +4,6 @@ pragma solidity ^0.7.1;
 
 
 
-
-
 contract Provenance
 {
     address admin;
@@ -21,7 +19,7 @@ contract Provenance
     {
         address producer;
         string name;
-        uint[] locationData;
+        int[] locationData;
         uint timeStamp;
     }
     mapping (address => Producer) producers;
@@ -37,6 +35,13 @@ contract Provenance
         require(msg.sender==admin, "You are not authorized to perform this action");
         _;
     }
+
+    modifier onlyProducer(string memory _serialNo) 
+    { 
+        require (msg.sender==products[_serialNo].producer,"You can't delete this product:You are not the producer"); 
+        _; 
+    }
+    
 
     function addProducer(string memory _name,uint _phoneNo,string memory _cityState,string memory  _country) public returns (bool)
     {
@@ -72,7 +77,7 @@ contract Provenance
         return true;
     }
 
-    function addProduct(string memory _serialNo,string memory _name,uint[] memory _locationData)public  returns (bool)
+    function addProduct(string memory _serialNo,string memory _name,int[] memory _locationData)public  returns (bool)
     {
         if(products[_serialNo].producer==address(0x0) && bytes(_serialNo).length!=0)
         {
@@ -91,12 +96,15 @@ contract Provenance
     {
         return admin;
     }
-    function removeProduct(string memory _serialNo) onlyAdmin public returns(bool)
+
+    function removeProduct(string memory _serialNo) onlyProducer(_serialNo) public returns(bool)
+
+
     {
         delete products[_serialNo];
         return true;
     }
-    function findProduct(string memory _serialNo) public view returns(address,string memory,uint[] memory,uint)
+    function findProduct(string memory _serialNo) public view returns(address,string memory,int[] memory,uint)
     {
         return(products[_serialNo].producer,products[_serialNo].name,products[_serialNo].locationData,products[_serialNo].timeStamp);
     }
