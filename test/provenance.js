@@ -125,5 +125,4 @@ contract("To add product name and details and removal of the product only by the
 
 })
 
-});
 
