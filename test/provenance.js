@@ -42,7 +42,7 @@ contract("To add Producers and give them certifications,and their removal",async
 		}catch(error)
 		{
 			//skip
-			// console.log(error);
+
 		}
 		finally
 		{
@@ -60,7 +60,9 @@ contract("To add Producers and give them certifications,and their removal",async
 		let producerCityState=chance.city()+'-'+chance.state({ full: true });
 		let producerCountry=chance.country({ full: true });
 		let addProducerSuccess=await instance.addProducer(producerName,producerPhoneNo,producerCityState,producerCountry,{from:accounts[3]});
-		let producerObj=await instance.findProducer.call(accounts[3]);
+
+		let producerObj=await instance.findProducer(accounts[3]);
+
 		
 		assert.equal(producerObj['0'],producerName);
 		assert.equal(producerObj['1'].toNumber(),producerPhoneNo);
@@ -73,7 +75,9 @@ contract("To add Producers and give them certifications,and their removal",async
 		catch(error)
 		{
 			//skip
+
 			// console.log(error);
+
 		}
 		finally
 		{
@@ -82,6 +86,7 @@ contract("To add Producers and give them certifications,and their removal",async
 			assert.equal(producerObj['0'],'');
 		}
 	})
+
 });
 
 contract("To add product name and details and removal of the product only by the producer of the product", async accounts=>{
@@ -119,3 +124,6 @@ contract("To add product name and details and removal of the product only by the
 	});
 
 })
+
+});
+

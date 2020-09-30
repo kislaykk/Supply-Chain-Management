@@ -96,7 +96,10 @@ contract Provenance
     {
         return admin;
     }
+
     function removeProduct(string memory _serialNo) onlyProducer(_serialNo) public returns(bool)
+
+
     {
         delete products[_serialNo];
         return true;
