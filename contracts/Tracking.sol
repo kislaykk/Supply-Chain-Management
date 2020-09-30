@@ -3,14 +3,14 @@ pragma solidity ^0.7.1;
 contract Tracking
 {
     address admin;
-    uint [] contractLocation;//for latitude and longitude
+    int [] contractLocation;//for latitude and longitude
     uint contractLeadTime;//in seconds
     uint contractPayment;//in tokens
     struct Shipment
     {
         string item;
         uint quantity;
-        uint[] locationData;
+        int[] locationData;
         uint timeStamp;
         address payable sender;
         bool paid;
@@ -32,7 +32,7 @@ contract Tracking
     mapping(address=>Supplier) suppliers;
     address[] suppliersByAddress;
     //events to display messages
-    event Success(string _message,string trackingNo,uint[] _locationData,uint _timeStamp,address _sender);
+    event Success(string _message,string trackingNo,int[] _locationData,uint _timeStamp,address _sender);
     event Payment(string _message,address _from,address _to,uint _amount);
     event Failure(string _message);
 
@@ -109,7 +109,7 @@ contract Tracking
         }
     }
 
-    function setContractParameters(uint[] memory _location,uint _leadTime,uint _payment)onlyAdmin public returns (bool)
+    function setContractParameters(int[] memory _location,uint _leadTime,uint _payment)onlyAdmin public returns (bool)
     {
         contractLocation=_location;
         contractLeadTime=_leadTime;
@@ -117,7 +117,7 @@ contract Tracking
         return true;
     }
 
-    function sendShipment(string memory trackingNo,string memory _item,uint _quantity,uint[] memory _locationData) public returns (bool)
+    function sendShipment(string memory trackingNo,string memory _item,uint _quantity,int[] memory _locationData) public returns (bool)
     {
         shipments[trackingNo].item=_item;
         shipments[trackingNo].quantity=_quantity;
@@ -129,7 +129,7 @@ contract Tracking
         return true;
     }
 
-    function receiveShipment(string memory trackingNo,string memory _item,uint _quantity,uint[] memory _locationData)public  returns (bool)
+    function receiveShipment(string memory trackingNo,string memory _item,uint _quantity,int[] memory _locationData)public  returns (bool)
     {
         // improve the logic
         //more if and else for different cases......
@@ -173,7 +173,7 @@ contract Tracking
         return true;
     }
 
-    function checkShipment(string memory trackingNo) public view returns(string memory,uint,uint[] memory,uint,address)
+    function checkShipment(string memory trackingNo) public view returns(string memory,uint,int[] memory,uint,address)
     {
         return(shipments[trackingNo].item,shipments[trackingNo].quantity,shipments[trackingNo].locationData,shipments[trackingNo].timeStamp,shipments[trackingNo].sender);
     }
