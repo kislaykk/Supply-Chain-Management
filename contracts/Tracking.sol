@@ -116,7 +116,10 @@ contract Tracking
         contractPayment=_payment;
         return true;
     }
-
+    function getContractParameters() public view returns(int[] memory,uint ,uint )
+    {
+        return (contractLocation,contractLeadTime,contractPayment);
+    }
     function sendShipment(string memory trackingNo,string memory _item,uint _quantity,int[] memory _locationData) public returns (bool)
     {
         shipments[trackingNo].item=_item;
@@ -173,9 +176,9 @@ contract Tracking
         return true;
     }
 
-    function checkShipment(string memory trackingNo) public view returns(string memory,uint,int[] memory,uint,address)
+    function checkShipment(string memory trackingNo) public view returns(string memory,uint,int[] memory,uint,bool,address)
     {
-        return(shipments[trackingNo].item,shipments[trackingNo].quantity,shipments[trackingNo].locationData,shipments[trackingNo].timeStamp,shipments[trackingNo].sender);
+        return(shipments[trackingNo].item,shipments[trackingNo].quantity,shipments[trackingNo].locationData,shipments[trackingNo].timeStamp,shipments[trackingNo].paid,shipments[trackingNo].sender);
     }
 
     function checkSuccess(address _sender) public view returns(uint,uint)

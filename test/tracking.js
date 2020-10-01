@@ -1,6 +1,7 @@
+const tracking=artifacts.require('Tracking');
+
 let Chance=require('chance');
 let chance=new Chance();
-const tracking=artifacts.require('Tracking');
 
 contract("adding supplier,finding it and removing it",async accounts=>{
 	it("this should add the supplier and find also search the supplier by the account address",async ()=>{
@@ -54,5 +55,64 @@ contract("adding supplier,finding it and removing it",async accounts=>{
 		expect(suppliersList).to.include(accounts[3]);
 		expect(suppliersList).to.include(accounts[4]);
 
-	})
-})
+	});
+});
+
+contract("to add contract parameters,send shipment,receive shipment and transacting money from contract", async accounts=>{
+	let location;
+	it("sending ethers to the deployed smart contracts and checking it",async()=>{
+		let instance=await tracking.deployed();
+		let balanceBeforeSending=await web3.eth.getBalance(accounts[0]);
+		let weiToTransfer= web3.utils.toWei('2','ether');
+		let successfulEtherTransfer=await instance.send(weiToTransfer,{from:accounts[0]});
+		let balanceOfSmartContract=await instance.balanceOfContract();
+		let balanceAfterSending=await web3.eth.getBalance(accounts[0]);
+		let difference=parseInt(balanceBeforeSending)-parseInt(balanceAfterSending);
+		expect(difference).to.be.above(parseInt(weiToTransfer));
+		expect(difference).to.be.below(parseInt(web3.utils.toWei('3','ether')));
+		expect(balanceOfSmartContract.toString()).to.be.equal(weiToTransfer);
+	});
+
+	it("setting contract prameters",async()=>{
+		let instance=await tracking.deployed();
+		location=[Math.round(chance.latitude()),Math.round(chance.longitude())];
+		let leadTime=120; //120 seconds
+		let paymentAmount=web3.utils.toWei('1','ether');
+		let succesfullSetContractPayment=await instance.setContractParameters(location,leadTime,paymentAmount,{from:accounts[0]});
+		let contractParameters=await instance.getContractParameters();
+		// console.log(contractParameters);
+		expect(parseInt(contractParameters['0'][0].toString())).to.be.equal(location[0]);
+		expect(parseInt(contractParameters['0'][1].toString())).to.be.equal(location[1]);
+		expect(parseInt(contractParameters['1'].toString())).to.be.equal(120);
+		expect(contractParameters['2'].toString()).to.be.equal(web3.utils.toWei('1','ether'));
+	});
+	it("creating a supplier who supplies fruits from a location to contract parameter's location and gets paid",async()=>{
+		//Adding a supplier
+		let instance=await tracking.deployed();
+		// let instance=await tracking.deployed();
+		let supplierName=chance.name({nationality:'en'});
+		let supplierPhoneNo=parseInt(chance.phone({formatted:false}));
+		let supplierCityState=chance.city()+'-'+chance.state({ full: true });
+		let supplierCountry=chance.country({ full: true });
+
+		let addSupplier=await instance.addSupplier(supplierName,supplierPhoneNo,supplierCityState,supplierCountry,{from : accounts[1]});
+
+		//that supplier is now sending shipments of apple.
+		let sendShipment=await instance.sendShipment('ship-1','apple',30,[3,5],{from:accounts[1]});
+
+		//receiving shipment by the owner of the contract
+		let receiveShipment= await instance.receiveShipment('ship-1','apple',30,location,{from:accounts[0]});
+
+		//checking shipment
+		let checkedShipment=await instance.checkShipment('ship-1');
+		expect(sendShipment.logs[0].event).to.be.equal('Success');
+		expect(sendShipment.logs[0].args['0']).to.be.equal('Item Shipped');
+		expect(receiveShipment.logs[0].event).to.be.equal('Success');
+		expect(receiveShipment.logs[0].args['0']).to.be.equal('Item received');
+		expect(receiveShipment.logs[1].event).to.be.equal('Payment');
+		expect(receiveShipment.logs[1].args['0']).to.be.equal('Payment successful');
+		expect(checkedShipment['4']).to.be.true;
+
+
+	});
+});
