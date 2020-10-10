@@ -1,5 +1,5 @@
 //SPDX-License-Identifier:UNLICENSED
-pragma solidity ^0.7.1;
+pragma solidity ^0.6.0;
 
 
 
@@ -24,7 +24,7 @@ contract Provenance
     mapping (address => Producer) producers;
     mapping (string => Product) products;
 
-    constructor()//only run once when the contact is deployed
+    constructor() public
     {
         admin=msg.sender;
     }
@@ -78,7 +78,7 @@ contract Provenance
 
     function addProduct(string memory _serialNo,string memory _name,int[] memory _locationData)public  returns (bool)
     {
-        if(products[_serialNo].producer==address(0x0) && bytes(_serialNo).length!=0)
+        if(products[_serialNo].producer==address(0x0) && bytes(_serialNo).length!=0 && producers[msg.sender].certified)
         {
             products[_serialNo].producer=msg.sender;
             products[_serialNo].name=_name;

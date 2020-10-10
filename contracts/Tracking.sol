@@ -1,5 +1,5 @@
 //SPDX-License-Identifier:UNLICENSED
-pragma solidity ^0.7.1;
+pragma solidity ^0.6.0;
 contract Tracking
 {
     address admin;
@@ -36,7 +36,7 @@ contract Tracking
     event Payment(string _message,address _from,address _to,uint _amount);
     event Failure(string _message);
 
-    constructor()
+    constructor() public
     {
         admin=msg.sender;
         
