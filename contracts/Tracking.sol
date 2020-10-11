@@ -204,7 +204,7 @@ contract Tracking
 
     receive() onlyAdmin external payable{}
 
-    function balanceOfContract()onlyAdmin public view returns (uint)
+    function balanceOfContract() public view returns (uint)
     {
         return (address(this).balance);
     }
