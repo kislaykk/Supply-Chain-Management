@@ -1,12 +1,21 @@
 import React from'react';
-import {useFormik} from 'formik';
+import {Form,Button} from 'react-bootstrap';
+
+import {Formik} from 'formik';  
 
 const FindProducer=(props)=>{
-  const formik=useFormik({
-    initialValues:{
-      producer_address:'',
-    },
-    onSubmit:async (values)=>{
+  return(
+    <Formik
+    initialValues={{
+          producer_address:'',
+        }}
+    onSubmit={async (values, {setSubmitting, resetForm})=>{
+      setSubmitting(true);
+      setTimeout(() => {
+            alert(JSON.stringify(values, null, 2));
+            resetForm();
+            setSubmitting(false);
+           }, 500);
       try{
         let vals=await props.contract.methods.findProducer(values.producer_address).call()
         if(vals['0']==='')
@@ -20,25 +29,32 @@ const FindProducer=(props)=>{
       catch(err){
         alert("no one with this Address");
       }
-            
       
-      
-    },  
+    }}
+    >
+    {
+      ({values,
+          errors,
+          touched,
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          isSubmitting })=>(
 
-
-  });
-  return(
-    <form onSubmit={formik.handleSubmit}>
-    <label htmlFor="producer_address">Producer's Address</label>
-         <input
-           id="producer_address"
-           name="producer_address"
-           type="text"
-           onChange={formik.handleChange}
-           value={formik.values.producer_address}
-         />
-         <button type="submit">Submit</button>
-    </form>
+            <Form onSubmit={handleSubmit}>
+            <Form.Label >Producer's Address</Form.Label>
+                 <Form.Control
+                   id="producer_address"
+                   name="producer_address"
+                   type="text"
+                   onChange={handleChange}
+                   value={values.producer_address}
+                 />
+                 <Button type="submit">Find!</Button>
+            </Form>
+          )
+    }
+    </Formik>
     )
 }
 

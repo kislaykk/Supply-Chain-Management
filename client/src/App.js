@@ -15,7 +15,8 @@ import {
   useParams,
   useRouteMatch
 } from "react-router-dom";
-
+import 'bootstrap/dist/css/bootstrap.css';
+import {Nav,Navbar} from 'react-bootstrap';
 
 class App extends Component {
   state = { accounts:null,web3: null, contract1: null,contract2:null };
@@ -64,12 +65,31 @@ class App extends Component {
     return (
       <Router>
         <div>
+        <Navbar bg="primary" variant="dark" sticky="top">
+        <Navbar.Brand href="/">Home</Navbar.Brand>
+          <Nav className="mr-auto">
+
+            
+            <Nav.Item >
+              <Nav.Link  as={Link} to="/Producers">Producers</Nav.Link>
+            </Nav.Item>
+            <Nav.Item >
+              <Nav.Link  as={Link} to="/Products">Products</Nav.Link>
+            </Nav.Item>
+            <Nav.Item >
+              <Nav.Link  as={Link} to="/Suppliers">Suppliers</Nav.Link>
+            </Nav.Item>
+            <Nav.Item >
+              <Nav.Link  as={Link} to="/Contract">Contract</Nav.Link>
+            </Nav.Item>
+          </Nav>
+        </Navbar>
           
-          <Link to="/">Home</Link>
-          <Link to="/Producers">Producers</Link>
-          <Link to="/Products">Products</Link>
-          <Link to="/Suppliers">Suppliers</Link>
-          <Link to="/Contract">Contract</Link>
+          
+          
+          
+          
+          
           <Switch>
             <Route exact path="/">
               <Home/>

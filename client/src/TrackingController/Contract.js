@@ -8,6 +8,7 @@ function Contract(props)
 {
 	return(
 		<div>
+		<h3>CONTRACT</h3> 
 		<BalanceOfContract contract={props.contract}/>
 		<br/>
 		<SendEthToContract contract={props.contract} accounts={props.accounts} web3={props.web3}/>

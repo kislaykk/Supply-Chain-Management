@@ -13,7 +13,8 @@ import GetAllSuppliers from "./GetAllSuppliers"
 function Suppliers(props)
 {
 	return(
-	    <div>  
+	    <div>
+	    <h3>SUPPLIERS</h3>  
 		<GetContractParameters contract={props.contract}/>
 	    <br/>
 	    <AddSupplier contract={props.contract} accounts={props.accounts}/>
