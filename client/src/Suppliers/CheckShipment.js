@@ -1,44 +1,51 @@
 import React from'react';
-import {useFormik} from 'formik';
-
+import {Formik} from 'formik';
+import {Form,Button} from 'react-bootstrap';
 const CheckShipment=(props)=>{
-  const formik=useFormik({
-    initialValues:{
-      trackingId:'',
-    },
-    onSubmit:async (values)=>{
-      try{
-        let vals=await props.contract.methods.checkShipment(values.trackingId).call()
-        if(vals['1']==='')
-        {
-          alert("no one with this trackingId");
-        }
-        else
-        console.log(vals);
-
-      }
-      catch(err){
-        alert("no one with this trackingId");
-      }
-            
-      
-      
-    },  
-
-
-  });
+ 
   return(
-    <form onSubmit={formik.handleSubmit}>
-    <label htmlFor="trackingId">trackingId</label>
-         <input
+    <Formik
+    initialValues={{
+          trackingId:'',
+        }}
+    onSubmit={async (values)=>{
+          try{
+            let vals=await props.contract.methods.checkShipment(values.trackingId).call()
+            if(vals['1']==='')
+            {
+              alert("no one with this trackingId");
+            }
+            else
+            console.log(vals);
+    
+          }
+          catch(err){
+            alert("no one with this trackingId");
+          }  
+        }}
+    >
+    {({
+      values,
+      errors,
+      touched,
+      handleChange,
+      handleBlur,
+      handleSubmit,
+      isSubmitting 
+    })=>
+    <Form onSubmit={handleSubmit}>
+    <Form.Label >trackingId</Form.Label>
+         <Form.Control
            id="trackingId"
            name="trackingId"
            type="text"
-           onChange={formik.handleChange}
-           value={formik.values.trackingId}
+           onChange={handleChange}
+           value={values.trackingId}
          />
-         <button type="submit">Find</button>
-    </form>
+         <Button type="submit">Find</Button>
+    </Form>
+    }
+    </Formik>
     )
 }
 

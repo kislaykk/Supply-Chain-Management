@@ -1,69 +1,80 @@
 import React from'react';
-import {useFormik} from 'formik';
+import {Formik} from 'formik';
+import {Form,Button} from 'react-bootstrap';
 
 const ReceiveShipment=(props)=>{
-	const formik=useFormik({
-		initialValues:{
-			trackingId:'',
-			itemName:'',
-			quantity:'',
-			latitude:'',
-			longitude:'',
-		},
-		onSubmit:values=>{
-			props.contract.methods.receiveShipment(values.trackingId,values.itemName,values.quantity,[values.latitude,values.longitude]).send({from:props.accounts[0]})
-			.then(success=>console.log(success))
-			.catch(err=>console.log(err));
-			
-		},	
-
-
-	});
-	return(
-		<form onSubmit={formik.handleSubmit}>
-			<label htmlFor="trackingId">trackingId</label>
-	       <input
+	
+	return (
+		<Formik
+		initialValues={{
+					trackingId:'',
+					itemName:'',
+					quantity:'',
+					latitude:'',
+					longitude:'',
+				}}
+		onSubmit={values=>{
+					props.contract.methods.receiveShipment(values.trackingId,values.itemName,values.quantity,[values.latitude,values.longitude]).send({from:props.accounts[0]})
+					.then(success=>console.log(success))
+					.catch(err=>console.log(err));
+					
+				}}
+		>
+		{({
+			values,
+			errors,
+			touched,
+			handleChange,
+			handleBlur,
+			handleSubmit,
+			isSubmitting
+		})=>
+		<Form onSubmit={handleSubmit}>
+			<Form.Label htmlFor="trackingId">trackingId</Form.Label>
+	       <Form.Control
 	         id="trackingId"
 	         name="trackingId"
 	         type="text"
-	         onChange={formik.handleChange}
-	         value={formik.values.trackingId}
+	         onChange={handleChange}
+	         value={values.trackingId}
 	       />
-	       	<label htmlFor="itemName">itemName</label>
-	       <input
+	       <Form.Label htmlFor="itemName">itemName</Form.Label>
+	       <Form.Control
 	         id="itemName"
 	         name="itemName"
 	         type="text"
-	         onChange={formik.handleChange}
-	         value={formik.values.itemName}
+	         onChange={handleChange}
+	         value={values.itemName}
 	       />
-	       <label htmlFor="quantity">quantity</label>
-	       <input
+	       <Form.Label htmlFor="quantity">quantity</Form.Label>
+	       <Form.Control
 	         id="quantity"
 	         name="quantity"
 	         type="text"
-	         onChange={formik.handleChange}
-	         value={formik.values.quantity}
+	         onChange={handleChange}
+	         value={values.quantity}
 	       />
-	       <label htmlFor="latitude">latitude</label>
-	       <input
+	       <Form.Label htmlFor="latitude">latitude</Form.Label>
+	       <Form.Control
 	         id="latitude"
 	         name="latitude"
 	         type="text"
-	         onChange={formik.handleChange}
-	         value={formik.values.latitude}
+	         onChange={handleChange}
+	         value={values.latitude}
 	       />
-	       <label htmlFor="longitude">longitude</label>
-	       <input
+	       <Form.Label htmlFor="longitude">longitude</Form.Label>
+	       <Form.Control
 	         id="longitude"
 	         name="longitude"
 	         type="text"
-	         onChange={formik.handleChange}
-	         value={formik.values.longitude}
+	         onChange={handleChange}
+	         value={values.longitude}
 	       />
 	       
-	       <button type="submit">Submit</button>
-		</form>
+	       <Button type="submit">Submit</Button>
+		</Form>
+		}
+		</Formik>
 		)
 }
 

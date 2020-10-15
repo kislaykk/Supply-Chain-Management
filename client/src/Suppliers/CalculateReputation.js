@@ -1,33 +1,42 @@
 import React from'react';
-import {useFormik} from 'formik';
-
+import {Formik} from 'formik';
+import {Form,Button} from 'react-bootstrap';
 const CalculateReputation=(props)=>{
-	const formik=useFormik({
-		initialValues:{
-			supplierAddress:'',
-		},
-		onSubmit:values=>{
-			props.contract.methods.calculateReputation(values.supplierAddress).call()
-			.then(success=>console.log(success))
-			.catch(err=>console.log(err));
-			
-		},	
-
-
-	});
 	return(
-		<form onSubmit={formik.handleSubmit}>
-		<label htmlFor="supplierAddress">supplier Address</label>
-	       <input
+		<Formik 
+		initialValues={{
+					supplierAddress:''
+				}}
+		onSubmit={(values)=>{
+					props.contract.methods.calculateReputation(values.supplierAddress).call()
+					.then(success=>console.log(success))
+					.catch(err=>console.log(err));
+					
+				}}
+		>
+		{({
+			values,
+            errors,
+            touched,
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            isSubmitting 
+		})=>
+		<Form onSubmit={handleSubmit}>
+		<Form.Label htmlFor="supplierAddress">supplier Address</Form.Label>
+	       <Form.Control
 	         id="supplierAddress"
 	         name="supplierAddress"
 	         type="text"
-	         onChange={formik.handleChange}
-	         value={formik.values.supplierAddress}
+	         onChange={handleChange}
+	         value={values.supplierAddress}
 	       />
 	       
-	       <button type="submit">Submit</button>
-		</form>
+	       <Button type="submit">Submit</Button>
+		</Form>
+		}
+		</Formik>
 		)
 }
 

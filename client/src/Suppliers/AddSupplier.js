@@ -1,59 +1,71 @@
 import React from'react';
-import {useFormik} from 'formik';
+import {Formik} from 'formik';
+import {Form,Button} from 'react-bootstrap';
 
 const AddSupplier=(props)=>{
-	const formik=useFormik({
-		initialValues:{
-			name:'',
-			phoneNo:'',
-			cityState:'',
-			country:'',
-		},
-		onSubmit:values=>{
-			props.contract.methods.addSupplier(values.name,values.phoneNo,values.cityState,values.country).send({from:props.accounts[0]})
-			.then(success=>console.log(success))
-			.catch(err=>console.log(err));
-			
-		},	
-
-
-	});
+	
 	return(
-		<form onSubmit={formik.handleSubmit}>
-		<label htmlFor="name">name</label>
-	       <input
-	         id="name"
-	         name="name"
-	         type="text"
-	         onChange={formik.handleChange}
-	         value={formik.values.name}
-	       />
-	       <label htmlFor="phoneNo">phoneNo</label>
-	       <input
-	         id="phoneNo"
-	         name="phoneNo"
-	         type="text"
-	         onChange={formik.handleChange}
-	         value={formik.values.phoneNo}
-	       />
-	       <label htmlFor="cityState">cityState</label>
-	       <input
-	         id="cityState"
-	         name="cityState"
-	         type="cityState"
-	         onChange={formik.handleChange}
-	         value={formik.values.cityState}
-	       />
-	       <label htmlFor="country">country</label>
-	       <input
-	         id="country"
-	         name="country"
-	         type="country"
-	         onChange={formik.handleChange}
-	         value={formik.values.country}
-	       />
-	       <button type="submit">Submit</button>
-		</form>
+		<Formik
+		initialValues={{
+					name:'',
+					phoneNo:'',
+					cityState:'',
+					country:'',
+				}}
+		onSubmit={(values)=>{
+					props.contract.methods.addSupplier(values.name,values.phoneNo,values.cityState,values.country).send({from:props.accounts[0]})
+					.then(success=>console.log(success))
+					.catch(err=>console.log(err));
+					
+				}}
+		>
+		{({
+					values,
+		            errors,
+		            touched,
+		            handleChange,
+		            handleBlur,
+		            handleSubmit,
+		            isSubmitting 
+				})=>(
+				<Form onSubmit={handleSubmit}>
+				<Form.Label htmlFor="name">name</Form.Label>
+			       <Form.Control
+			         id="name"
+			         name="name"
+			         type="text"
+			         onChange={handleChange}
+			         value={values.name}
+			       />
+			       <Form.Label htmlFor="phoneNo">phoneNo</Form.Label>
+			       <Form.Control
+			         id="phoneNo"
+			         name="phoneNo"
+			         type="text"
+			         onChange={handleChange}
+			         value={values.phoneNo}
+			       />
+			       <Form.Label htmlFor="cityState">cityState</Form.Label>
+			       <Form.Control
+			         id="cityState"
+			         name="cityState"
+			         type="text"
+			         onChange={handleChange}
+			         value={values.cityState}
+			       />
+			       <Form.Label htmlFor="country">country</Form.Label>
+			       <Form.Control
+			         id="country"
+			         name="country"
+			         type="text"
+			         onChange={handleChange}
+			         value={values.country}
+			       />
+			       <Button type="submit">Submit</Button>
+				</Form>
+				)}
+		
+		</Formik>
 		)
 }
 

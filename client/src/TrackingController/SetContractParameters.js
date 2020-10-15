@@ -1,64 +1,75 @@
 import React from'react';
-import {useFormik} from 'formik';
-
+import {Formik} from 'formik';
+import {Form,Button} from 'react-bootstrap';
 const SetContractParameters=(props)=>{
-  const formik=useFormik({
-    initialValues:{
-      latitude:'',
-      longitude:'',
-      leadTime:'',
-      paymentAmount:''
-    },
-    onSubmit:async (values)=>{
-      try
-      {
-      	let parametersSet=await props.contract.methods.setContractParameters([values.latitude,values.longitude],values.leadTime,values.paymentAmount).send({from:props.accounts[0]});
-      }
-      catch(err)
-      {
-      	alert(err.message)
-      }
-    },  
+ 
+  return (
+    <Formik
+    initialValues={{
+          latitude:'',
+          longitude:'',
+          leadTime:'',
+          paymentAmount:''
+        }}
+    onSubmit={async (values)=>{
+          try
+          {
+            let parametersSet=await props.contract.methods.setContractParameters([values.latitude,values.longitude],values.leadTime,values.paymentAmount).send({from:props.accounts[0]});
+          }
+          catch(err)
+          {
+            alert(err.message)
+          }
+        }}
+    >
+    {({
+       values,
+      errors,
+      touched,
+      handleChange,
+      handleBlur,
+      handleSubmit,
+      isSubmitting
+    })=>
 
-
-  });
-  return(
-    <form onSubmit={formik.handleSubmit}>
-     <label htmlFor="latitude">latitude</label>
-     <input
+     <Form onSubmit={handleSubmit}>
+     <Form.Label htmlFor="latitude">latitude</Form.Label>
+     <Form.Control
        id="latitude"
        name="latitude"
        type="text"
-       onChange={formik.handleChange}
-       value={formik.values.latitude}
+       onChange={handleChange}
+       value={values.latitude}
      />
-    <label htmlFor="longitude">longitude</label>
-         <input
+    <Form.Label htmlFor="longitude">longitude</Form.Label>
+         <Form.Control
            id="longitude"
            name="longitude"
            type="text"
-           onChange={formik.handleChange}
-           value={formik.values.longitude}
+           onChange={handleChange}
+           value={values.longitude}
          />
-     <label htmlFor="leadTime">leadTime</label>
-         <input
+     <Form.Label htmlFor="leadTime">leadTime</Form.Label>
+         <Form.Control
            id="leadTime"
            name="leadTime"
            type="text"
-           onChange={formik.handleChange}
-           value={formik.values.leadTime}
+           onChange={handleChange}
+           value={values.leadTime}
          />
-      <label htmlFor="paymentAmount">paymentAmount</label>
-         <input
+      <Form.Label htmlFor="paymentAmount">paymentAmount</Form.Label>
+         <Form.Control
            id="paymentAmount"
            name="paymentAmount"
            type="text"
-           onChange={formik.handleChange}
-           value={formik.values.paymentAmount}
+           onChange={handleChange}
+           value={values.paymentAmount}
          />
-     <button type="submit">Submit</button>
+     <Button type="submit">Submit</Button>
 
-    </form>
+    </Form>
+    }
+    </Formik>
     )
 }
 

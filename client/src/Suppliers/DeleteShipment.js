@@ -1,40 +1,49 @@
 import React from'react';
-import {useFormik} from 'formik';
+import {Formik} from 'formik';
+import {Form,Button} from 'react-bootstrap';
 
 const DeleteShipment=(props)=>{
-  const formik=useFormik({
-    initialValues:{
-      trackingId:'',
-    },
-    onSubmit:async (values)=>{
-      try{
-        let vals=await props.contract.methods.deleteShipment(values.trackingId).send({from:props.accounts[0]})
-        
-        console.log(vals);
-
-      }
-      catch(err){
-        console.log(err)
-      }
-            
-      
-      
-    },  
-
-
-  });
+ 
   return(
-    <form onSubmit={formik.handleSubmit}>
-    <label htmlFor="trackingId">trackingId</label>
-         <input
+    <Formik
+    initialValues={{
+          trackingId:'',
+        }}
+    onSubmit={async (values)=>{
+          try{
+            let vals=await props.contract.methods.deleteShipment(values.trackingId).send({from:props.accounts[0]})
+            
+            console.log(vals);
+    
+          }
+          catch(err){
+            console.log(err)
+          }  
+        }}
+    >
+    {({
+      values,
+      errors,
+      touched,
+      handleChange,
+      handleBlur,
+      handleSubmit,
+      isSubmitting
+    })=>
+    <Form onSubmit={handleSubmit}>
+    <Form.Label >trackingId</Form.Label>
+         <Form.Control
            id="trackingId"
            name="trackingId"
            type="text"
-           onChange={formik.handleChange}
-           value={formik.values.trackingId}
+           onChange={handleChange}
+           value={values.trackingId}
          />
-         <button type="submit">Delete</button>
-    </form>
+         <Button variant="danger" type="submit">Delete</Button >
+    </Form>
+  }
+
+    </Formik>
     )
 }
 
