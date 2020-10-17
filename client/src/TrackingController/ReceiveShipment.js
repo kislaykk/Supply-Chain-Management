@@ -1,10 +1,40 @@
-import React from'react';
-import {Formik} from 'formik';
-import {Form,Button} from 'react-bootstrap';
+import React,{useState} from'react';
+import {Formik} from  'formik'
+import {Form,Button,Alert} from 'react-bootstrap';
 
 const ReceiveShipment=(props)=>{
-	
+	const [show,setShow]=useState(false);
+  	const [transactionInfo,setTransactionInfo]=useState({});
+  	const toggleShow=()=>setShow(!show);
 	return (
+		<div>
+		<Alert variant="info" show={show} onClose={() => setShow(false)} dismissible>
+            <Alert.Heading>Contract parameters set</Alert.Heading>
+            <p>
+              transaction Hash:
+              
+              {transactionInfo.transactionHash}
+              <br/>
+              blockHash:
+             
+              {transactionInfo.blockHash}
+              <br/>
+              transaction from:
+              
+              {transactionInfo.from}
+              <br/>
+              transaction to:
+              
+              {transactionInfo.to}
+              <br/>
+              gas Used:
+              
+              {transactionInfo.gasUsed}
+              <br/>
+              Payment:
+              {transactionInfo.event}
+            </p>
+            </Alert>
 		<Formik
 		initialValues={{
 					trackingId:'',
@@ -13,9 +43,33 @@ const ReceiveShipment=(props)=>{
 					latitude:'',
 					longitude:'',
 				}}
-		onSubmit={values=>{
+		onSubmit={async (values,{setSubmitting, resetForm})=>{
+				setSubmitting(true);
+                setTimeout(() => {
+                      resetForm();
+                      setSubmitting(false);
+                   }, 500);
 					props.contract.methods.receiveShipment(values.trackingId,values.itemName,values.quantity,[values.latitude,values.longitude]).send({from:props.accounts[0]})
-					.then(success=>console.log(success))
+					.then(success=>{
+					let transactionHash=success.transactionHash;
+                    let blockHash=success.blockHash
+                    let from=success.from;
+                    let to= success.from;
+                    let gasUsed=success.gasUsed;
+                    let event;
+                    if(success.events.Failure.event==="Failure") event="Failure"
+                    else if (success.events.Payments.event==="Payment" && success.events.Success.event==="Success") event="Payment successful"
+                    let transaction={
+                      transactionHash,
+                      blockHash,
+                      from,
+                      to,
+                      gasUsed,
+                      event
+                    }
+                    setTransactionInfo(transaction);
+                    setShow(true);
+					})
 					.catch(err=>console.log(err));
 					
 				}}
@@ -75,6 +129,7 @@ const ReceiveShipment=(props)=>{
 		</Form>
 		}
 		</Formik>
+		</div>
 		)
 }
 

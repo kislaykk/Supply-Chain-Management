@@ -1,11 +1,38 @@
-import React from 'react';
-import {Form,Button} from 'react-bootstrap';
+import React,{useState} from 'react';
+import {Form,Button,Alert} from 'react-bootstrap';
 
-import {Formik} from 'formik';
-
+import {Formik} from 'formik'; 
 const RemoveProducer=(props)=>{
-
+  const [show,setShow]=useState(false);
+  const [transactionInfo,setTransactionInfo]=useState({});
+  const toggleShow=()=>setShow(!show);
   return(
+    <div>
+    <Alert variant="danger" show={show} onClose={() => setShow(false)} dismissible>
+            <Alert.Heading>Producer Removed</Alert.Heading>
+            <p>
+              transaction Hash:
+              
+              {transactionInfo.transactionHash}
+              <br/>
+              blockHash:
+             
+              {transactionInfo.blockHash}
+              <br/>
+              transaction from:
+              
+              {transactionInfo.from}
+              <br/>
+              transaction to:
+              
+              {transactionInfo.to}
+              <br/>
+              gas Used:
+              
+              {transactionInfo.gasUsed}
+            </p>
+          </Alert>
+        
     <Formik
     initialValues={{
           producer_address:'',
@@ -13,13 +40,26 @@ const RemoveProducer=(props)=>{
     onSubmit={async (values, {setSubmitting, resetForm})=>{
       setSubmitting(true);
       setTimeout(() => {
-            alert(JSON.stringify(values, null, 2));
             resetForm();
             setSubmitting(false);
            }, 500);
         try{
-          let vals=await props.contract.methods.removeProducer(values.producer_address).send({from:props.accounts[0]})
-          console.log(vals);
+          let success=await props.contract.methods.removeProducer(values.producer_address).send({from:props.accounts[0]})
+          let transactionHash=success.transactionHash;
+          let blockHash=success.blockHash
+          let from=success.from;
+          let to= success.from;
+          let gasUsed=success.gasUsed;
+          let transaction={
+            transactionHash,
+            blockHash,
+            from,
+            to,
+            gasUsed,
+          }
+          setTransactionInfo(transaction);
+          setShow(true);
+
 
         }
         catch(err){
@@ -50,6 +90,7 @@ const RemoveProducer=(props)=>{
           )
     }
     </Formik>
+    </div>
     )
 }
 

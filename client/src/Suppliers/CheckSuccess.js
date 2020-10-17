@@ -1,18 +1,40 @@
-import React from'react';
-import {Formik} from 'formik';
-import {Form,Button} from 'react-bootstrap';
+import React,{useState} from'react';
+import {Form,Button,Toast} from 'react-bootstrap';
+
+import {Formik} from 'formik'; 
 
 const CheckSuccess=(props)=>{
-
+	  const [showA, setShowA] = useState(false);
+  const [toaster_message,setToaster_message]=useState('');
+  const toggleShowA = () => setShowA(!showA);
+  const setToastermes=(mes)=> setToaster_message(mes);
 
 	return(
+		<div>
+		<Toast show={showA} onClose={toggleShowA}>
+          <Toast.Header>
+            <img
+              
+              className="rounded mr-2"
+              alt=""
+            />
+            <strong className="mr-auto">Result</strong>
+            <small>{new Date().getHours() +":"+ new Date().getMinutes()}</small>
+          </Toast.Header>
+          <Toast.Body>{toaster_message}</Toast.Body>
+        </Toast>
 		<Formik
 		initialValues={{
 					supplierAddress:'',
 				}}
 		onSubmit={values=>{
 					props.contract.methods.checkSuccess(values.supplierAddress).call()
-					.then(success=>console.log(success))
+					.then(vals=>{
+						 let productInfo=`shipped-successfully: ${vals['0']}
+			              shipped in total: ${vals['1']}`;
+			              setToastermes(productInfo);
+			              toggleShowA();
+					})
 					.catch(err=>console.log(err));
 					
 				}}
@@ -40,6 +62,7 @@ const CheckSuccess=(props)=>{
 		</Form>
 		}
 		</Formik>
+		</div>
 		)
 }
 

@@ -1,10 +1,37 @@
-import React from'react';
+import React,{useState} from 'react';
 import {Formik} from 'formik';
-import {Form,Button} from 'react-bootstrap';
+import {Form,Button,Alert} from 'react-bootstrap';
 const SendShipment=(props)=>{
-	
+	const [show,setShow]=useState(false);
+	const [transactionInfo,setTransactionInfo]=useState({});
+  	const toggleShow=()=>setShow(!show);
 
 	return(
+		<div>
+		<Alert variant="success" show={show} onClose={() => setShow(false)} dismissible>
+            <Alert.Heading>Shipment sent!</Alert.Heading>
+            <p>
+              transaction Hash:
+              
+              {transactionInfo.transactionHash}
+              <br/>
+              blockHash:
+             
+              {transactionInfo.blockHash}
+              <br/>
+              transaction from:
+              
+              {transactionInfo.from}
+              <br/>
+              transaction to:
+              
+              {transactionInfo.to}
+              <br/>
+              gas Used:
+              
+              {transactionInfo.gasUsed}
+            </p>
+          </Alert>
 		<Formik
 		initialValues={{
 					trackingId:'',
@@ -15,8 +42,23 @@ const SendShipment=(props)=>{
 				}}
 		onSubmit={(values)=>{
 					props.contract.methods.sendShipment(values.trackingId,values.itemName,values.quantity,[values.latitude,values.longitude]).send({from:props.accounts[0]})
-					.then(success=>console.log(success))
-					.catch(err=>console.log(err));
+					.then(success=>{
+						let transactionHash=success.transactionHash;
+			              let blockHash=success.blockHash
+			              let from=success.from;
+			              let to= success.from;
+			              let gasUsed=success.gasUsed;
+			              let transaction={
+			                transactionHash,
+			                blockHash,
+			                from,
+			                to,
+			                gasUsed,
+			              }
+			              setTransactionInfo(transaction);
+			              setShow(true);
+						})
+						.catch(err=>console.log(err));
 					
 				}}
 		>
@@ -75,6 +117,7 @@ const SendShipment=(props)=>{
 		</Form>
 		}
 		</Formik>
+		</div>
 		)
 }
 

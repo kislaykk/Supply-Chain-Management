@@ -1,23 +1,58 @@
-import React from'react';
+import React,{useState} from 'react';
 import {Formik} from 'formik';
-import {Form,Button} from 'react-bootstrap';
+import {Form,Button,Alert} from 'react-bootstrap';
 
 const DeleteSupplier=(props)=>{
- 
+    const [show,setShow]=useState(false);
+  const [transactionInfo,setTransactionInfo]=useState({});
+  const toggleShow=()=>setShow(!show);
   return(
+    <div>
+    <Alert variant="danger" show={show} onClose={() => setShow(false)} dismissible>
+            <Alert.Heading>Supplier Removed</Alert.Heading>
+            <p>
+              transaction Hash:
+              
+              {transactionInfo.transactionHash}
+              <br/>
+              blockHash:
+             
+              {transactionInfo.blockHash}
+              <br/>
+              transaction from:
+              
+              {transactionInfo.from}
+              <br/>
+              transaction to:
+              
+              {transactionInfo.to}
+              <br/>
+              gas Used:
+              
+              {transactionInfo.gasUsed}
+            </p>
+          </Alert>
     <Formik
     initialValues={{
           supplier_address:'',
         }}
     onSubmit={async (values)=>{
           try{
-            let vals=await props.contract.methods.deleteSupplier(values.supplier_address).send({from:props.accounts[0]})
-            if(vals['0']==='')
-            {
-              alert("no one with this Address");
-            }
-            else
-            console.log(vals);
+            let success=await props.contract.methods.deleteSupplier(values.supplier_address).send({from:props.accounts[0]})
+           let transactionHash=success.transactionHash;
+              let blockHash=success.blockHash
+              let from=success.from;
+              let to= success.from;
+              let gasUsed=success.gasUsed;
+              let transaction={
+                transactionHash,
+                blockHash,
+                from,
+                to,
+                gasUsed,
+              }
+              setTransactionInfo(transaction);
+              setShow(true);
     
           }
           catch(err){
@@ -47,6 +82,7 @@ const DeleteSupplier=(props)=>{
              <Button variant="danger" type="submit">Delete</Button>
         </Form>}
     </Formik>
+    </div>
     )
 }
 

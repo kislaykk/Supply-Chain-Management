@@ -21,7 +21,7 @@ function Contract(props)
                                         <Nav.Link eventKey="second">Send Ether To Contract</Nav.Link>
                                 </Nav.Item>
                                 <Nav.Item>
-                                        <Nav.Link eventKey="third">Sert Contract Parameter</Nav.Link>
+                                        <Nav.Link eventKey="third">Set Contract Parameter</Nav.Link>
                                 </Nav.Item>
                                 <Nav.Item>
                                         <Nav.Link eventKey="forth">Receive Shipment</Nav.Link>
