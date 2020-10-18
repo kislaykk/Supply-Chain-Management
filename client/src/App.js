@@ -13,16 +13,24 @@ import {
   Route,
   Link,
   useParams,
-  useRouteMatch
+  useRouteMatch,
+  useLocation,
+  useHistory
 } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.css';
 import {Nav,Navbar} from 'react-bootstrap';
-
+const  reload=()=>{
+	window.location.reload();
+}
 class App extends Component {
   state = { accounts:null,web3: null, contract1: null,contract2:null };
-
+  
   componentDidMount = async () => {
+  	window.ethereum.on('accountsChanged',  (accounts)=> {
+			this.setState({accounts})
+	});
     try {
+
       // Get network provider and web3 instance.
       const web3 = await getWeb3();
       // Use web3 to get the user's accounts.

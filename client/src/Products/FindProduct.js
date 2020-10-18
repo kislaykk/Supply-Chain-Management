@@ -12,11 +12,6 @@ const FindProduct=(props)=>{
     <div>
     <Toast show={showA} onClose={toggleShowA}>
           <Toast.Header>
-            <img
-              
-              className="rounded mr-2"
-              alt=""
-            />
             <strong className="mr-auto">Result</strong>
             <small>{new Date().getHours() +":"+ new Date().getMinutes()}</small>
           </Toast.Header>

@@ -12,7 +12,7 @@ const RegisterProducer=(props)=>{
 		 
 		    
 		      <Alert variant="info" show={show} onClose={() => setShow(false)} dismissible>
-		        <Alert.Heading>Message</Alert.Heading>
+		        <Alert.Heading>Transaction details for redistration</Alert.Heading>
 		        <p>
 		          transaction Hash:
 		          

@@ -17,7 +17,7 @@ const FindSupplier=(props)=>{
               className="rounded mr-2"
               alt=""
             />
-            <strong className="mr-auto">Result</strong>
+            <strong className="mr-auto">Supplier</strong>
             <small>{new Date().getHours() +":"+ new Date().getMinutes()}</small>
           </Toast.Header>
           <Toast.Body>{toaster_message}</Toast.Body>

@@ -6,10 +6,14 @@ const ReceiveShipment=(props)=>{
 	const [show,setShow]=useState(false);
   	const [transactionInfo,setTransactionInfo]=useState({});
   	const toggleShow=()=>setShow(!show);
+  	const [varianttype,setVarianttype]=useState("");
+  	const changevariant=(type)=>setVarianttype(type);
+  	const [paymentstat,setPaymentstat]=useState("");
+  	const changePaymentstat=(stat)=>setPaymentstat(stat);
 	return (
 		<div>
-		<Alert variant="info" show={show} onClose={() => setShow(false)} dismissible>
-            <Alert.Heading>Contract parameters set</Alert.Heading>
+		<Alert variant={varianttype} show={show} onClose={() => setShow(false)} dismissible>
+            <Alert.Heading>{paymentstat}</Alert.Heading>
             <p>
               transaction Hash:
               
@@ -51,14 +55,24 @@ const ReceiveShipment=(props)=>{
                    }, 500);
 					props.contract.methods.receiveShipment(values.trackingId,values.itemName,values.quantity,[values.latitude,values.longitude]).send({from:props.accounts[0]})
 					.then(success=>{
+					console.log(success);
 					let transactionHash=success.transactionHash;
                     let blockHash=success.blockHash
                     let from=success.from;
                     let to= success.from;
                     let gasUsed=success.gasUsed;
                     let event;
-                    if(success.events.Failure.event==="Failure") event="Failure"
-                    else if (success.events.Payments.event==="Payment" && success.events.Success.event==="Success") event="Payment successful"
+                    // console.log(success)
+                    if(success.events.Failure) {
+                    	event="Failure";
+                    	changevariant("danger");
+                    	changePaymentstat("Payment Failed");
+                    }
+                    else if (success.events.Payment && success.events.Success) {
+                    	event="Payment successful";
+                    	changevariant("success");
+                    	changePaymentstat("Payment Successful");
+                    }
                     let transaction={
                       transactionHash,
                       blockHash,

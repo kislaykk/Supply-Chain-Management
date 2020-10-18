@@ -11,12 +11,7 @@ const CalculateReputation=(props)=>{
 		<div>
 		<Toast show={showA} onClose={toggleShowA}>
           <Toast.Header>
-            <img
-              
-              className="rounded mr-2"
-              alt=""
-            />
-            <strong className="mr-auto">Result</strong>
+            <strong className="mr-auto">Reputation</strong>
             <small>{new Date().getHours() +":"+ new Date().getMinutes()}</small>
           </Toast.Header>
           <Toast.Body>{toaster_message}</Toast.Body>
