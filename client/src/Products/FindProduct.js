@@ -21,7 +21,12 @@ const FindProduct=(props)=>{
     initialValues={{
           serialNo:'',
         }}
-    onSubmit={async (values)=>{
+    onSubmit={async (values,{setSubmitting, resetForm})=>{
+             setSubmitting(true);
+                setTimeout(() => {
+                      resetForm();
+                      setSubmitting(false);
+                   }, 500);
           try{
             let vals=await props.contract.methods.findProduct(values.serialNo).call()
             if(vals['1']==='')

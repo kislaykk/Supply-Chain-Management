@@ -19,11 +19,11 @@ const GetContractParamters = (props) => {
   return (
     <div>
       latitude:{latitude}
-      
+      <br/>
       longitude:{longitude}
-      
+      <br/>
       leadTime:{leadTime}
-     
+      <br/>
       payment:{payment}
     </div>
     );

@@ -40,7 +40,12 @@ const SendShipment=(props)=>{
 					latitude:'',
 					longitude:'',
 				}}
-		onSubmit={(values)=>{
+		onSubmit={(values,{setSubmitting, resetForm})=>{
+             setSubmitting(true);
+                setTimeout(() => {
+                      resetForm();
+                      setSubmitting(false);
+                   }, 500);
 					props.contract.methods.sendShipment(values.trackingId,values.itemName,values.quantity,[values.latitude,values.longitude]).send({from:props.accounts[0]})
 					.then(success=>{
 						let transactionHash=success.transactionHash;

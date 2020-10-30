@@ -36,7 +36,12 @@ const DeleteShipment=(props)=>{
     initialValues={{
           trackingId:'',
         }}
-    onSubmit={async (values)=>{
+    onSubmit={async (values,{setSubmitting, resetForm})=>{
+             setSubmitting(true);
+                setTimeout(() => {
+                      resetForm();
+                      setSubmitting(false);
+                   }, 500);
           try{
             let success=await props.contract.methods.deleteShipment(values.trackingId).send({from:props.accounts[0]})
             let transactionHash=success.transactionHash;

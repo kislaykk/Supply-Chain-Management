@@ -27,7 +27,12 @@ const CheckSuccess=(props)=>{
 		initialValues={{
 					supplierAddress:'',
 				}}
-		onSubmit={values=>{
+		onSubmit={(values,{setSubmitting, resetForm})=>{
+             setSubmitting(true);
+                setTimeout(() => {
+                      resetForm();
+                      setSubmitting(false);
+                   }, 500);
 					props.contract.methods.checkSuccess(values.supplierAddress).call()
 					.then(vals=>{
 						 let productInfo=`shipped-successfully: ${vals['0']}

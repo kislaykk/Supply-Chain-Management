@@ -10,7 +10,11 @@ const BalanceOfContract = (props) => {
     }) () ;
   }, []);
 
-  return <div>{balance}</div>;
+  return <div>
+  	{balance} wei
+  	<br/>
+  	{balance/(10**17)} eth
+  	</div>;
 };
 
 export default BalanceOfContract;

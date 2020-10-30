@@ -19,7 +19,12 @@ import {Formik} from 'formik';const CheckShipment=(props)=>{
     initialValues={{
           trackingId:'',
         }}
-    onSubmit={async (values)=>{ 
+    onSubmit={async (values,{setSubmitting, resetForm})=>{
+             setSubmitting(true);
+                setTimeout(() => {
+                      resetForm();
+                      setSubmitting(false);
+                   }, 500);
           try{
             let vals=await props.contract.methods.checkShipment(values.trackingId).call()
             if(!vals['0'])

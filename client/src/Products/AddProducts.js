@@ -39,7 +39,12 @@ const AddProducts=(props)=>{
 						latitude:'',
 						longitute:'',
 					}}
-			onSubmit={async (values)=>{
+			onSubmit={async (values,{setSubmitting, resetForm})=>{
+             setSubmitting(true);
+                setTimeout(() => {
+                      resetForm();
+                      setSubmitting(false);
+                   }, 500);
 							try{
 							let success=await props.contract.methods.addProduct(values.serialNo,values.productName,[values.latitude,values.longitute]).send({from:props.accounts[0]})
 							let transactionHash=success.transactionHash;

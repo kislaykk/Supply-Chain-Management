@@ -26,7 +26,12 @@ const FindSupplier=(props)=>{
     initialValues={{
           supplier_address:'',
         }}
-    onSubmit={async (values)=>{
+    onSubmit={async (values,{setSubmitting, resetForm})=>{
+             setSubmitting(true);
+                setTimeout(() => {
+                      resetForm();
+                      setSubmitting(false);
+                   }, 500);
           try{
             let vals=await props.contract.methods.findSupplier(values.supplier_address).call()
             if(vals['0']==='')

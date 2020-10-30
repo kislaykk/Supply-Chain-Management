@@ -39,7 +39,12 @@ const [show,setShow]=useState(false);
 					cityState:'',
 					country:'',
 				}}
-		onSubmit={(values)=>{
+		onSubmit={async (values,{setSubmitting, resetForm})=>{
+             setSubmitting(true);
+                setTimeout(() => {
+                      resetForm();
+                      setSubmitting(false);
+                   }, 500);
 					props.contract.methods.addSupplier(values.name,values.phoneNo,values.cityState,values.country).send({from:props.accounts[0]})
 					.then(success=>{
 						let transactionHash=success.transactionHash;

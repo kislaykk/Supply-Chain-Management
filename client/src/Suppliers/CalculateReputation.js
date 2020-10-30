@@ -20,7 +20,12 @@ const CalculateReputation=(props)=>{
 		initialValues={{
 					supplierAddress:''
 				}}
-		onSubmit={(values)=>{
+		onSubmit={async (values,{setSubmitting, resetForm})=>{
+             setSubmitting(true);
+                setTimeout(() => {
+                      resetForm();
+                      setSubmitting(false);
+                   }, 500);
 					props.contract.methods.calculateReputation(values.supplierAddress).call()
 					.then(success=>{
 						let productInfo=`sucess-rate:${success}`;
