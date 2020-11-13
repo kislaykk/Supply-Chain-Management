@@ -17,14 +17,16 @@
  * phrase from a file you've .gitignored so it doesn't accidentally become public.
  *
  */
-
-// const HDWalletProvider = require('@truffle/hdwallet-provider');
+const mnemonicGanache="clown magnet animal unhappy brother gym wild lumber squirrel gentle trumpet injury"
+const HDWalletProvider = require('@truffle/hdwallet-provider');
 // const infuraKey = "fj4jll3k.....";
 //
 // const fs = require('fs');
 // const mnemonic = fs.readFileSync(".secret").toString().trim();
 
+const {mnemonic}=require('./seedphrase');
 module.exports = {
+  contracts_build_directory:"./client/src/contracts",
   /**
    * Networks define how you connect to your ethereum client and let you set the
    * defaults web3 uses to send transactions. If you don't specify one truffle
@@ -43,9 +45,25 @@ module.exports = {
     // options below to some value.
     //
     development: {
-     host: "127.0.0.1",     // Localhost (default: none)
-     port: 7545,            // Standard Ethereum port (default: none)
+      // provider: ()=>new HDWalletProvider(mnemonicGanache,"http://127.0.0.1:7545/")
+            provider: ()=>new HDWalletProvider({
+              mnemonic:{
+                phrase:mnemonicGanache
+              },
+              providerOrUrl:"http://127.0.0.1:7545/",
+            }),
+
+                // Standard Ethereum port (default: none)
      network_id: "5777",      
+    },
+    goerli :{
+      provider:()=>new HDWalletProvider({
+        mnemonic:{
+          phrase:mnemonic
+        },
+        providerOrUrl:'https://goerli.infura.io/v3/e9e1b7e9ea3e4ff3a04d726ba7daf1d1',
+      }),
+      network_id:"5",
     }
     // Another network with more advanced options...
     // advanced: {
